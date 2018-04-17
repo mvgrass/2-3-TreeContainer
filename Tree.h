@@ -319,9 +319,15 @@ void Tree<Key, Compare>::erase(Node<Key>* node){
 
     }else{
         if(parent->parent == nullptr){
-            root = (parent->childs[0]==node)?parent->childs[1]:parent->childs[0];
+            Node<Key>* prev_root = root;
+			root = (parent->childs[0]==node)?parent->childs[1]:parent->childs[0];
             root->parent = nullptr;
-            delete node;
+            
+			prev_root->childs[0] = nullptr;
+			prev_root->childs[1] = nullptr;
+			delete prev_root;
+
+			delete node;
         }else{
             Node<Key>* nb = (parent->childs[0]==node)?parent->childs[1]:parent->childs[0];
             Node<Key>* gnb;
