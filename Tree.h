@@ -56,10 +56,10 @@ public:
     Tree& operator=(const Tree&);
     Tree& operator=(Tree&&);
 
-    Tree operator+(const Tree&) const;
-    Tree operator|(const Tree&) const;
-    Tree operator&(const Tree&) const;
-    Tree operator-(const Tree&) const;
+    Tree operator+(const Tree&) const;//XOR
+    Tree operator|(const Tree&) const;//Union
+    Tree operator&(const Tree&) const;//Intersection
+    Tree operator-(const Tree&) const;//Difference
 
     void insert(Key);
     void erase(Key);
@@ -262,11 +262,7 @@ void Tree<Key, Compare>::insert(Key value){
             Node<Key>* next_ = this->next(new_node);
             Node<Key>* prev_ = this->prev(new_node);
 
-            if(next_&&prev_&&next_->keys[0]<prev_->keys[0]) {
-                this->next(new_node);
-                std::cout << "something wrong";
-            }
-
+            
             if(next_!=nullptr){
                 new_node->right = next_;
                 next_->left = new_node;
@@ -319,15 +315,13 @@ void Tree<Key, Compare>::erase(Node<Key>* node){
 
     }else{
         if(parent->parent == nullptr){
-            Node<Key>* prev_root = root;
-			root = (parent->childs[0]==node)?parent->childs[1]:parent->childs[0];
+			Node<Key>* prev_root = root;
+            root = (parent->childs[0]==node)?parent->childs[1]:parent->childs[0];
             root->parent = nullptr;
-            
 			prev_root->childs[0] = nullptr;
 			prev_root->childs[1] = nullptr;
 			delete prev_root;
-
-			delete node;
+            delete node;
         }else{
             Node<Key>* nb = (parent->childs[0]==node)?parent->childs[1]:parent->childs[0];
             Node<Key>* gnb;
@@ -348,8 +342,9 @@ void Tree<Key, Compare>::erase(Node<Key>* node){
             this->updateKeys(nb);
             this->splitParent(gnb);
 
+			delete node;
+			node = nullptr;
 
-            delete node;
             this->erase(parent);
 
             this->updateKeys(nb);
