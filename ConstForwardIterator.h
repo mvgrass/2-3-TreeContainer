@@ -7,13 +7,14 @@ template<class Key, class Compare>
 class Tree;
 
 template<class Key>
-class Node;
+struct Node;
 
 template<class Key>
-class ConstForwardIterator: std::iterator<std::forward_iterator_tag, Key>{
+class ConstForwardIterator: public std::iterator<std::forward_iterator_tag, Key>{
 public:
     ConstForwardIterator(const Node<Key>* node):p(node){}
-    ConstForwardIterator& operator++(){
+    
+	ConstForwardIterator& operator++(){
         if(p!=nullptr)
             p = p->right;
 
@@ -23,7 +24,8 @@ public:
     ConstForwardIterator operator++(int v){
         ConstForwardIterator temp = *this;
 
-        p = p->right;
+		this->operator++();
+
         return temp;
     }
 
@@ -32,6 +34,9 @@ public:
         return this->p != other.p;
     }
 
+	bool operator==(const ConstForwardIterator& other) const {
+		return !(this->operator!=(other));
+	}
 
     Key operator*() const{
         return p->keys[0];
